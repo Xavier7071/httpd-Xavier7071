@@ -1,0 +1,12 @@
+C:\Users\xavie\OneDrive - Cegep de Sorel-Tracy\Session 4\POO III\httpd-Xavier7071\src\Httpd\bin\Debug\net6.0\Httpd.deps.json
+C:\Users\xavie\OneDrive - Cegep de Sorel-Tracy\Session 4\POO III\httpd-Xavier7071\src\Httpd\bin\Debug\net6.0\Httpd.dll
+C:\Users\xavie\OneDrive - Cegep de Sorel-Tracy\Session 4\POO III\httpd-Xavier7071\src\Httpd\bin\Debug\net6.0\ref\Httpd.dll
+C:\Users\xavie\OneDrive - Cegep de Sorel-Tracy\Session 4\POO III\httpd-Xavier7071\src\Httpd\bin\Debug\net6.0\Httpd.pdb
+C:\Users\xavie\OneDrive - Cegep de Sorel-Tracy\Session 4\POO III\httpd-Xavier7071\src\Httpd\obj\Debug\net6.0\Httpd.csproj.AssemblyReference.cache
+C:\Users\xavie\OneDrive - Cegep de Sorel-Tracy\Session 4\POO III\httpd-Xavier7071\src\Httpd\obj\Debug\net6.0\Httpd.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\xavie\OneDrive - Cegep de Sorel-Tracy\Session 4\POO III\httpd-Xavier7071\src\Httpd\obj\Debug\net6.0\Httpd.AssemblyInfoInputs.cache
+C:\Users\xavie\OneDrive - Cegep de Sorel-Tracy\Session 4\POO III\httpd-Xavier7071\src\Httpd\obj\Debug\net6.0\Httpd.AssemblyInfo.cs
+C:\Users\xavie\OneDrive - Cegep de Sorel-Tracy\Session 4\POO III\httpd-Xavier7071\src\Httpd\obj\Debug\net6.0\Httpd.csproj.CoreCompileInputs.cache
+C:\Users\xavie\OneDrive - Cegep de Sorel-Tracy\Session 4\POO III\httpd-Xavier7071\src\Httpd\obj\Debug\net6.0\Httpd.dll
+C:\Users\xavie\OneDrive - Cegep de Sorel-Tracy\Session 4\POO III\httpd-Xavier7071\src\Httpd\obj\Debug\net6.0\ref\Httpd.dll
+C:\Users\xavie\OneDrive - Cegep de Sorel-Tracy\Session 4\POO III\httpd-Xavier7071\src\Httpd\obj\Debug\net6.0\Httpd.pdb

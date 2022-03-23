@@ -1,0 +1,36 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v6.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v6.0": {
+      "Httpd.CLI/1.0.0": {
+        "dependencies": {
+          "Httpd": "1.0.0"
+        },
+        "runtime": {
+          "Httpd.CLI.dll": {}
+        }
+      },
+      "Httpd/1.0.0": {
+        "runtime": {
+          "Httpd.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "Httpd.CLI/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Httpd/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

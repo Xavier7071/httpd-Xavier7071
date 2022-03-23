@@ -1,11 +1,30 @@
 {
   "version": 3,
   "targets": {
-    "net6.0": {}
+    "net6.0": {
+      "Httpd/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v6.0",
+        "compile": {
+          "bin/placeholder/Httpd.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Httpd.dll": {}
+        }
+      }
+    }
   },
-  "libraries": {},
+  "libraries": {
+    "Httpd/1.0.0": {
+      "type": "project",
+      "path": "../Httpd/Httpd.csproj",
+      "msbuildProject": "../Httpd/Httpd.csproj"
+    }
+  },
   "projectFileDependencyGroups": {
-    "net6.0": []
+    "net6.0": [
+      "Httpd >= 1.0.0"
+    ]
   },
   "packageFolders": {
     "C:\\Users\\xavie\\.nuget\\packages\\": {}
@@ -31,7 +50,11 @@
       "frameworks": {
         "net6.0": {
           "targetAlias": "net6.0",
-          "projectReferences": {}
+          "projectReferences": {
+            "C:\\Users\\xavie\\OneDrive - Cegep de Sorel-Tracy\\Session 4\\POO III\\httpd-Xavier7071\\src\\Httpd\\Httpd.csproj": {
+              "projectPath": "C:\\Users\\xavie\\OneDrive - Cegep de Sorel-Tracy\\Session 4\\POO III\\httpd-Xavier7071\\src\\Httpd\\Httpd.csproj"
+            }
+          }
         }
       },
       "warningProperties": {
