@@ -1,4 +1,1 @@
-﻿using Httpd;
-
-var server = new Server(3000);
-await server.Start();
+﻿Console.WriteLine("My Httpd server!");
