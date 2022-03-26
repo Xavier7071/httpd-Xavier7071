@@ -5,8 +5,7 @@ namespace Httpd;
 public class Server
 {
     private readonly Listener _listener;
-    private Request? _request;
-    private Response? _response;
+
     private int Port { get; }
 
     public Server(int port)
@@ -21,20 +20,18 @@ public class Server
         return await _listener.ListenOnPort();
     }
 
-    public string GetRequest(TcpClient client)
+    public string HandleRequest(TcpClient client, Request request)
     {
-        _request = new Request();
-        return _request.Read(client);
+        return request.Read(client);
     }
 
-    public void BuildResponse(string serverRequest)
+    public void BuildResponse(string serverRequest, Response response)
     {
-        _response = new Response();
-        _response.Build(serverRequest);
+        response.Build(serverRequest);
     }
 
-    public void SendResponse()
+    public void SendResponse(Request request, Response response)
     {
-        _request!.RespondToRequest(_response!.ResponseBytes!);
+        request.RespondToRequest(response.ResponseBytes!);
     }
 }
