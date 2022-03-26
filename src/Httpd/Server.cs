@@ -12,7 +12,6 @@ public class Server
     {
         Port = port;
         _listener = new Listener(Port);
-        _listener.Start();
     }
 
     public async Task<TcpClient> GetClient()
