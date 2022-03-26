@@ -5,28 +5,25 @@ namespace Httpd;
 
 public class Request
 {
-    public void HandleRequest(TcpClient client)
+    private NetworkStream? _stream;
+    private Socket? _socket;
+    private byte[]? _buffer;
+
+    public string Read(TcpClient client)
     {
         Thread.Sleep(50);
 
-        var stream = client.GetStream();
-        var socket = stream.Socket;
-        var buffer = new byte[socket.Available];
+        _stream = client.GetStream();
+        _socket = _stream.Socket;
+        _buffer = new byte[_socket.Available];
 
-        stream.Read(buffer, 0, buffer.Length);
+        _stream.Read(_buffer, 0, _buffer.Length);
 
-        var data = Encoding.UTF8.GetString(buffer);
-        Console.WriteLine(data);
+        return Encoding.UTF8.GetString(_buffer);
+    }
 
-        var response = "HTTP/1.1 200 OK \r\n";
-        response += "Content-Length: 1000\r\n";
-        response += "Content-Type: text/html\r\n";
-        response += "Connection: close\r\n";
-        response += "\r\n";
-        response += "<html><body><h1>It works!</h1><h1>It works!</h1>" + Environment.CurrentDirectory +
-                    "<h1>It works!</h1><h1>It works!</h1></body></html>\r\n";
-
-        var responseBytes = Encoding.UTF8.GetBytes(response);
-        socket.Send(responseBytes);
+    public void RespondToRequest(byte[] responseBytes)
+    {
+        _socket!.Send(responseBytes);
     }
 }

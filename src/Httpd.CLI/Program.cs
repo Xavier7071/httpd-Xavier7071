@@ -7,9 +7,14 @@ async Task ManageServer()
 {
     while (true)
     {
-        var client = await server.GetRequest();
+        var client = await server.GetClient();
 
         var request = new Request();
-        request.HandleRequest(client);
+        var serverRequest = request.Read(client);
+
+        var response = new Response();
+        response.Build(serverRequest);
+
+        request.RespondToRequest(response.ResponseBytes!);
     }
 }

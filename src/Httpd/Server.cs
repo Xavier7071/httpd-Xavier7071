@@ -4,7 +4,7 @@ namespace Httpd;
 
 public class Server
 {
-    private Listener _listener;
+    private readonly Listener _listener;
     private int Port { get; }
 
     public Server(int port)
@@ -14,7 +14,7 @@ public class Server
         _listener.Start();
     }
 
-    public async Task<TcpClient> GetRequest()
+    public async Task<TcpClient> GetClient()
     {
         return await _listener.ListenOnPort();
     }
