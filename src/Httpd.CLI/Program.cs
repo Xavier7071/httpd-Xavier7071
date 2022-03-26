@@ -8,13 +8,8 @@ async Task ManageServer()
     while (true)
     {
         var client = await server.GetClient();
-
-        var request = new Request();
-        var serverRequest = request.Read(client);
-
-        var response = new Response();
-        response.Build(serverRequest);
-
-        request.RespondToRequest(response.ResponseBytes!);
+        var serverRequest = server.GetRequest(client);
+        server.BuildResponse(serverRequest);
+        server.SendResponse();
     }
 }
