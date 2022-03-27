@@ -1,5 +1,13 @@
 {
   "Directory listing": "enabled",
-  "Extensions": ["HTML", "CSS", "JS", "JPG", "PNG", "GIF", "MOV"],
+  "Extensions": [
+    "HTML",
+    "CSS",
+    "JS",
+    "JPG",
+    "PNG",
+    "GIF",
+    "MOV"
+  ],
   "Port": 3000
 }
