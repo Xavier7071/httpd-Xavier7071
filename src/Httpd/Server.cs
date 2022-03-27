@@ -35,7 +35,6 @@ public class Server
 
     private string GetFilePath()
     {
-        var request = Request!.ServerRequest!.Split();
-        return request[1].Equals("/") ? "/index.html" : request[1];
+        return Request!.Path.Equals("/") ? "/index.html" : Request.Path;
     }
 }
