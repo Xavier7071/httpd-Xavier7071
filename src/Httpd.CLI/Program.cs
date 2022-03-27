@@ -1,7 +1,9 @@
 ﻿using System.Net.Sockets;
 using Httpd;
+using Httpd.CLI;
 
-var server = new Server(3000);
+var config = new Config();
+var server = new Server(config.Port, config.DirectoryListing, config.Extensions);
 await ManageServer();
 
 async Task ManageServer()
@@ -26,6 +28,6 @@ void HandleRequest(TcpClient client)
     }
     else
     {
-        // checker pour le directory listing
+        server.BuildDirectoryListing();
     }
 }
