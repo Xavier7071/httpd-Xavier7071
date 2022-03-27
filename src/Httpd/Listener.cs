@@ -11,15 +11,14 @@ public class Listener
         _listener = TcpListener.Create(port);
         Start();
     }
-    
+
     public async Task<TcpClient> ListenOnPort()
     {
         return await _listener.AcceptTcpClientAsync();
     }
-    
+
     private void Start()
     {
         _listener.Start();
     }
-
 }

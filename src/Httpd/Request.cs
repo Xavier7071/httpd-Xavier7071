@@ -8,8 +8,19 @@ public class Request
     private NetworkStream? _stream;
     private Socket? _socket;
     private byte[]? _buffer;
+    public string? ServerRequest { get; private set; }
 
-    public string Read(TcpClient client)
+    public Request(TcpClient client)
+    {
+        Read(client);
+    }
+
+    public void RespondToRequest(byte[] responseBytes)
+    {
+        _socket!.Send(responseBytes);
+    }
+
+    private void Read(TcpClient client)
     {
         Thread.Sleep(50);
 
@@ -19,11 +30,6 @@ public class Request
 
         _stream.Read(_buffer, 0, _buffer.Length);
 
-        return Encoding.UTF8.GetString(_buffer);
-    }
-
-    public void RespondToRequest(byte[] responseBytes)
-    {
-        _socket!.Send(responseBytes);
+        ServerRequest = Encoding.UTF8.GetString(_buffer);
     }
 }

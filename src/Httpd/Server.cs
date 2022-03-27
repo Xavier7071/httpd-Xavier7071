@@ -4,8 +4,8 @@ namespace Httpd;
 
 public class Server
 {
+    public Request? Request { get; set; }
     private readonly Listener _listener;
-
     private int Port { get; }
 
     public Server(int port)
@@ -19,18 +19,24 @@ public class Server
         return await _listener.ListenOnPort();
     }
 
-    public string HandleRequest(TcpClient client, Request request)
+    public void BuildResponse(Response response)
     {
-        return request.Read(client);
+        response.Build(GetFilePath());
     }
 
-    public void BuildResponse(string serverRequest, Response response)
+    public void SendResponse(Response response)
     {
-        response.Build(serverRequest);
+        Request!.RespondToRequest(response.ResponseBytes!);
     }
 
-    public void SendResponse(Request request, Response response)
+    public bool FilePathIsValid()
     {
-        request.RespondToRequest(response.ResponseBytes!);
+        return File.Exists(Environment.CurrentDirectory + GetFilePath());
+    }
+
+    private string GetFilePath()
+    {
+        var request = Request!.ServerRequest!.Split();
+        return request[1].Equals("/") ? "/index.html" : request[1];
     }
 }

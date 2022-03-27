@@ -1,4 +1,5 @@
-﻿using Httpd;
+﻿using System.Net.Sockets;
+using Httpd;
 
 var server = new Server(3000);
 await ManageServer();
@@ -8,13 +9,24 @@ async Task ManageServer()
     while (true)
     {
         var client = await server.GetClient();
+        new Thread(() => HandleRequest(client)).Start();
+    }
+}
 
-        var request = new Request();
-        var serverRequest = server.HandleRequest(client, request);
-
+void HandleRequest(TcpClient client)
+{
+    server.Request = new Request(client);
+    if (server.FilePathIsValid())
+    {
         var response = new Response();
-        server.BuildResponse(serverRequest, response);
-
-        server.SendResponse(request, response);
+        server.BuildResponse(response);
+        server.SendResponse(response);
+    }
+    else
+    {
+        var response = new Response();
+        server.BuildResponse(response);
+        server.SendResponse(response);
+        // checker pour le directory listing
     }
 }
