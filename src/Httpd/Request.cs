@@ -5,10 +5,10 @@ namespace Httpd;
 
 public class Request
 {
+    public string? ServerRequest { get; private set; }
     private NetworkStream? _stream;
     private Socket? _socket;
     private byte[]? _buffer;
-    public string? ServerRequest { get; private set; }
 
     public Request(TcpClient client)
     {
