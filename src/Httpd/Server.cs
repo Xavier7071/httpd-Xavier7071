@@ -5,18 +5,17 @@ namespace Httpd;
 public class Server
 {
     public Request? Request { get; set; }
-    private readonly Listener _listener;
-    private int Port { get; }
+    private readonly TcpListener _listener;
 
     public Server(int port)
     {
-        Port = port;
-        _listener = new Listener(Port);
+        _listener = TcpListener.Create(port);
+        _listener.Start();
     }
 
     public async Task<TcpClient> GetClient()
     {
-        return await _listener.ListenOnPort();
+        return await _listener.AcceptTcpClientAsync();
     }
 
     public void BuildResponse(Response response)
