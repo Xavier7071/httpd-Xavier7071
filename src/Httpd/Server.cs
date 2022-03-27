@@ -33,8 +33,8 @@ public class Server
         return File.Exists(Environment.CurrentDirectory + GetFilePath());
     }
 
-    private string GetFilePath()
+    private string? GetFilePath()
     {
-        return Request!.Path.Equals("/") ? "/index.html" : Request.Path;
+        return Request!.Path!.Equals("/") ? "/index.html" : Request.Path;
     }
 }

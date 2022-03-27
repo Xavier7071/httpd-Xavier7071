@@ -5,9 +5,9 @@ namespace Httpd;
 
 public class Request
 {
-    public string Path { get; private set; }
-    public string HttpMethod { get; private set; }
-    public string Protocol { get; private set; }
+    public string? Path { get; private set; }
+    public string? HttpMethod { get; private set; }
+    public string? Protocol { get; private set; }
     public string? ServerRequest { get; private set; }
     private NetworkStream? _stream;
     private Socket? _socket;
@@ -43,7 +43,7 @@ public class Request
 
     private void DissectRequest()
     {
-        var request = ServerRequest!.Split();
+        string?[] request = ServerRequest!.Split();
         HttpMethod = request[0];
         Path = request[1];
         Protocol = request[2];

@@ -9,7 +9,7 @@ async Task ManageServer()
     while (true)
     {
         var client = await server.GetClient();
-        new Thread(() => HandleRequest(client)).Start();
+        HandleRequest(client);
     }
 }
 
@@ -26,9 +26,6 @@ void HandleRequest(TcpClient client)
     }
     else
     {
-        var response = new Response();
-        server.BuildResponse(response);
-        server.SendResponse(response);
         // checker pour le directory listing
     }
 }
