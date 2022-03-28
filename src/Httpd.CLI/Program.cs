@@ -17,9 +17,10 @@ async Task ManageServer()
 
 void HandleRequest(TcpClient client)
 {
+
     server.Request = new Request(client);
     if (server.Request.ServerRequest!.Length <= 0) return;
-
+    
     if (server.FilePathIsValid())
     {
         var response = new Response();

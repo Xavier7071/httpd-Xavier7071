@@ -72,7 +72,7 @@ public class Server
     {
         if (!Path.HasExtension(Request!.Path))
         {
-            return Request.Path + "/index.html";
+            return Request.Path + "index.html";
         }
 
         return Request.Path;
