@@ -27,6 +27,12 @@ public class Server
         response.Build(GetFilePath());
     }
 
+    public void Build404Response(Response response)
+    {
+        response.Build404();
+        SendResponse(response);
+    }
+
     public void SendResponse(Response response)
     {
         Request!.RespondToRequest(response.ResponseBytes!);
@@ -34,15 +40,16 @@ public class Server
 
     public void BuildDirectoryListing()
     {
-        if (!_directoryListing)
+        if (!_directoryListing || !FolderPathIsValid())
         {
-            return;
+            var response = new Response();
+            Build404Response(response);
+            SendResponse(response);
         }
-
-        // Checker si c'est bien ou folder valide ou juste un fichier missing
-        // Erreur 404
-        // Directory Listing ici
-        // New Response ?
+        else
+        {
+            // Directory Listing ici
+        }
     }
 
     public bool FilePathIsValid()
@@ -51,9 +58,14 @@ public class Server
                _extensions.Contains(Path.GetExtension(Environment.CurrentDirectory + GetFilePath()));
     }
 
-    public bool FolderPathIsValid()
+    public bool IsFolder()
     {
-        return !Path.HasExtension(Request!.Path) && Directory.Exists(Environment.CurrentDirectory + Request!.Path);
+        return !Path.HasExtension(Request!.Path);
+    }
+
+    private bool FolderPathIsValid()
+    {
+        return Directory.Exists(Environment.CurrentDirectory + Request!.Path);
     }
 
     private string? GetFilePath()

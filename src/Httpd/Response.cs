@@ -18,6 +18,24 @@ public class Response
         ResponseBytes = _headerBytes!.Concat(_contentBytes!).ToArray();
     }
 
+    public void Build404()
+    {
+        var content = new StringBuilder();
+        content.Append(
+            "<html><body><h1>Not Found</h1><h3>The requested URL was not found on this server.</h3></body></html>\r\n");
+        _contentBytes = Encoding.UTF8.GetBytes(content.ToString());
+
+        var header = new StringBuilder();
+        header.Append("HTTP/1.1 404 Not Found \r\n");
+        header.Append("Content-Length: " + _contentBytes!.Length + "\r\n");
+        header.Append("Content-Type: text/html\r\n");
+        header.Append("Connection: close\r\n");
+        header.Append("\r\n");
+        _headerBytes = Encoding.UTF8.GetBytes(header.ToString());
+
+        ResponseBytes = _headerBytes!.Concat(_contentBytes!).ToArray();
+    }
+
     private void BuildContent()
     {
         _contentBytes = File.ReadAllBytes(Environment.CurrentDirectory + _path);
