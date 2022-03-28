@@ -39,7 +39,7 @@ public class Server
             return;
         }
 
-        // Checker si c'est bien ou folder ou juste un fichier missing
+        // Checker si c'est bien ou folder valide ou juste un fichier missing
         // Erreur 404
         // Directory Listing ici
         // New Response ?
@@ -47,11 +47,22 @@ public class Server
 
     public bool FilePathIsValid()
     {
-        return File.Exists(Environment.CurrentDirectory + GetFilePath()) && _extensions.Contains(Path.GetExtension(Environment.CurrentDirectory + GetFilePath()));
+        return File.Exists(Environment.CurrentDirectory + GetFilePath()) &&
+               _extensions.Contains(Path.GetExtension(Environment.CurrentDirectory + GetFilePath()));
+    }
+
+    public bool FolderPathIsValid()
+    {
+        return !Path.HasExtension(Request!.Path) && Directory.Exists(Environment.CurrentDirectory + Request!.Path);
     }
 
     private string? GetFilePath()
     {
-        return Request!.Path!.Equals("/") ? "/index.html" : Request.Path;
+        if (!Path.HasExtension(Request!.Path))
+        {
+            return Request.Path + "/index.html";
+        }
+
+        return Request.Path;
     }
 }

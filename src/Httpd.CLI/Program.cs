@@ -26,7 +26,7 @@ void HandleRequest(TcpClient client)
         server.BuildResponse(response);
         server.SendResponse(response);
     }
-    else
+    else if (server.FolderPathIsValid())
     {
         server.BuildDirectoryListing();
     }
