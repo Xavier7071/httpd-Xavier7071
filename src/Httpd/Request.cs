@@ -1,3 +1,4 @@
+using System.IO.Compression;
 using System.Net.Sockets;
 using System.Text;
 
@@ -9,6 +10,7 @@ public class Request
     public string? HttpMethod { get; private set; }
     public string? Protocol { get; private set; }
     public string? ServerRequest { get; private set; }
+    public bool AcceptsGzip { get; private set; }
     private NetworkStream? _stream;
     private Socket? _socket;
     private byte[]? _buffer;
@@ -18,6 +20,7 @@ public class Request
         HttpMethod = "";
         Protocol = "";
         Path = "";
+        AcceptsGzip = false;
         Read(client);
         if (ServerRequest!.Length <= 0) return;
         DissectRequest();
@@ -47,5 +50,10 @@ public class Request
         HttpMethod = request[0];
         Path = request[1];
         Protocol = request[2];
+
+        if (ServerRequest.Contains("gzip"))
+        {
+            AcceptsGzip = true;
+        }
     }
 }
