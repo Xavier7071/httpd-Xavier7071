@@ -38,7 +38,8 @@ public class Server
         }
         else if (IsFolder(request.Path!) && _directoryListing && FolderPathIsValid(request))
         {
-            request.RespondToRequest(BuildDirectoryListing(request));
+            var directoryListing = new DirectoryListing(request);
+            request.RespondToRequest(directoryListing.ResponseBytes);
         }
         else
         {
@@ -55,36 +56,6 @@ public class Server
         return response.ResponseBytes!;
     }
 
-    private static byte[] BuildDirectoryListing(Request request)
-    {
-        var response = new Response("null");
-        var stringBuilder = new StringBuilder();
-        
-        stringBuilder.Append("<html><body style='text-align: center;'>\r\n");
-        stringBuilder.Append("<h1>Index of " + request.Path + "</h1>\r\n");
-        var folders = Directory.GetDirectories(Environment.CurrentDirectory + request.Path!);
-        var files = Directory.GetFiles(Environment.CurrentDirectory + request.Path!);
-        stringBuilder.Append("<table style='margin: auto;'><tr><th>Name</th><th>Last modified</th><th>Size(Bytes)</th></tr>\r\n");
-
-        foreach (var folder in folders)
-        {
-            var folderInfo = new DirectoryInfo(folder);
-            var substring = folder[(folder.LastIndexOf('/') + 1)..];
-            stringBuilder.Append("<tr style='text-align: center;'><th><a href='" + substring + "/'>" + substring + "</a></th><td>" + folderInfo.LastWriteTime.ToShortDateString() +"</td></tr>\r\n");
-        }
-
-        foreach (var file in files)
-        {
-            var fileInfo = new FileInfo(file);
-            var substring = file[(file.LastIndexOf('/') + 1)..];
-            stringBuilder.Append("<tr style='text-align: center;'><th><a href='" + substring + "'>" + substring + "</a></th><td>" + fileInfo.LastWriteTime.ToShortDateString() +"</td><td>" + fileInfo.Length +"</td></tr>\r\n");
-        }
-
-        stringBuilder.Append("</table></body></html>\r\n");
-        response.Build(Encoding.UTF8.GetBytes(stringBuilder.ToString()));
-        return response.ResponseBytes!;
-    }
-
     private bool FilePathIsValid(Request request)
     {
         return File.Exists(Environment.CurrentDirectory + GetFilePath(request)) &&
@@ -97,6 +68,7 @@ public class Server
         {
             return false;
         }
+
         return !Path.HasExtension(path);
     }
 
