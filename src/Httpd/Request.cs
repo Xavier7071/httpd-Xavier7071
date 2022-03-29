@@ -1,4 +1,3 @@
-using System.IO.Compression;
 using System.Net.Sockets;
 using System.Text;
 
@@ -30,15 +29,15 @@ public class Request
     {
         if (AcceptsGzip)
         {
-//            var stream = new MemoryStream(responseBytes);
-//            MemoryStream memoryStream;
-//            using (memoryStream = new MemoryStream())
-//            {
-//                using (var gZipStream = new GZipStream(memoryStream, CompressionMode.Compress))
-//                {
-//                    stream.CopyTo(gZipStream);
-//                }
-//            }
+            //var stream = new MemoryStream(responseBytes);
+            //MemoryStream memoryStream;
+            //using (memoryStream = new MemoryStream())
+            //{
+            //    using (var gZipStream = new GZipStream(memoryStream, CompressionMode.Compress))
+            //    {
+            //        stream.CopyTo(gZipStream);
+            //    }
+            //}
         }
 
         _socket!.Send(responseBytes);
