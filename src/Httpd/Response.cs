@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Text;
 
 namespace Httpd;
@@ -7,13 +8,17 @@ public class Response
     public byte[]? ResponseBytes { get; private set; }
     private byte[]? _contentBytes;
     private byte[]? _headerBytes;
-    //private string[] _headers;
+    private readonly ArrayList _responseCode;
     private readonly string _path;
 
     public Response(string path)
     {
+        _responseCode = new ArrayList
+        {
+            200,
+            "OK"
+        };
         _path = path;
-        //_headers = new string[];
     }
 
     public void Build(byte[] content)
@@ -23,10 +28,20 @@ public class Response
         ResponseBytes = _headerBytes!.Concat(_contentBytes!).ToArray();
     }
 
+    public void SetResponseCode(int code, string message)
+    {
+        _responseCode[0] = code;
+        _responseCode[1] = message;
+    }
+
+    public void AddHeader(string header, string parameter)
+    {
+    }
+
     private byte[] BuildHeader()
     {
         var header = new StringBuilder();
-        header.Append("HTTP/1.1 200 OK \r\n");
+        header.Append("HTTP/1.1 " + _responseCode[0] + " " + _responseCode[1] + "\r\n");
         header.Append("Content-Length: " + _contentBytes!.Length + "\r\n");
         header.Append("Content-Type: " + GetContentType() + "\r\n");
         header.Append("Connection: close\r\n");

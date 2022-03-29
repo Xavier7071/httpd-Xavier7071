@@ -49,7 +49,9 @@ public class Server
     private static byte[] Build404Response()
     {
         var response = new Response("null");
-        response.Build(Encoding.UTF8.GetBytes("<html><body><h1>Not Found</h1><h3>The requested URL was not found on this server.</h3></body></html>\r\n"));
+        response.SetResponseCode(404, "NOT FOUND");
+        response.Build(Encoding.UTF8.GetBytes(
+            "<html><body><h1>Not Found</h1><h3>The requested URL was not found on this server.</h3></body></html>\r\n"));
         return response.ResponseBytes!;
     }
 
