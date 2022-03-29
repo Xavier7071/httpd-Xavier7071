@@ -36,9 +36,9 @@ public class Server
             response.Build(File.ReadAllBytes(Environment.CurrentDirectory + GetFilePath(request)));
             request.RespondToRequest(response.ResponseBytes!);
         }
-        else if (IsFolder(request) && _directoryListing && FolderPathIsValid(request))
+        else if (IsFolder(request.Path!) && _directoryListing && FolderPathIsValid(request))
         {
-            BuildDirectoryListing();
+            request.RespondToRequest(BuildDirectoryListing(request));
         }
         else
         {
@@ -55,9 +55,34 @@ public class Server
         return response.ResponseBytes!;
     }
 
-    private static void BuildDirectoryListing()
+    private static byte[] BuildDirectoryListing(Request request)
     {
-        // Directory Listing ici
+        var response = new Response("null");
+        var stringBuilder = new StringBuilder();
+        
+        stringBuilder.Append("<html><body style='text-align: center;'>\r\n");
+        stringBuilder.Append("<h1>Index of " + request.Path + "</h1>\r\n");
+        var folders = Directory.GetDirectories(Environment.CurrentDirectory + request.Path!);
+        var files = Directory.GetFiles(Environment.CurrentDirectory + request.Path!);
+        stringBuilder.Append("<table style='margin: auto;'><tr><th>Name</th><th>Last modified</th><th>Size(Bytes)</th></tr>\r\n");
+
+        foreach (var folder in folders)
+        {
+            var folderInfo = new DirectoryInfo(folder);
+            var substring = folder[(folder.LastIndexOf('/') + 1)..];
+            stringBuilder.Append("<tr><th><a href='" + substring + "/'>" + substring + "</a></th><td>" + folderInfo.LastWriteTime +"</td></tr>\r\n");
+        }
+
+        foreach (var file in files)
+        {
+            var fileInfo = new FileInfo(file);
+            var substring = file[(file.LastIndexOf('/') + 1)..];
+            stringBuilder.Append("<tr><th><a href='" + substring + "'>" + substring + "</a></th><td>" + fileInfo.LastWriteTime +"</td><td>" + fileInfo.Length +"</td></tr>\r\n");
+        }
+
+        stringBuilder.Append("</table></body></html>\r\n");
+        response.Build(Encoding.UTF8.GetBytes(stringBuilder.ToString()));
+        return response.ResponseBytes!;
     }
 
     private bool FilePathIsValid(Request request)
@@ -66,9 +91,13 @@ public class Server
                _extensions.Contains(Path.GetExtension(Environment.CurrentDirectory + GetFilePath(request)));
     }
 
-    private static bool IsFolder(Request request)
+    private static bool IsFolder(string path)
     {
-        return !Path.HasExtension(request.Path);
+        if (!path.EndsWith("/"))
+        {
+            return false;
+        }
+        return !Path.HasExtension(path);
     }
 
     private static bool FolderPathIsValid(Request request)
