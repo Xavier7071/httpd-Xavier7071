@@ -51,6 +51,7 @@ public class Response
         {
             header.Append(responseHeader + "\r\n");
         }
+
         header.Append("Connection: close\r\n");
         header.Append("\r\n");
 
