@@ -70,14 +70,14 @@ public class Server
         {
             var folderInfo = new DirectoryInfo(folder);
             var substring = folder[(folder.LastIndexOf('/') + 1)..];
-            stringBuilder.Append("<tr><th><a href='" + substring + "/'>" + substring + "</a></th><td>" + folderInfo.LastWriteTime +"</td></tr>\r\n");
+            stringBuilder.Append("<tr style='text-align: center;'><th><a href='" + substring + "/'>" + substring + "</a></th><td>" + folderInfo.LastWriteTime.ToShortDateString() +"</td></tr>\r\n");
         }
 
         foreach (var file in files)
         {
             var fileInfo = new FileInfo(file);
             var substring = file[(file.LastIndexOf('/') + 1)..];
-            stringBuilder.Append("<tr><th><a href='" + substring + "'>" + substring + "</a></th><td>" + fileInfo.LastWriteTime +"</td><td>" + fileInfo.Length +"</td></tr>\r\n");
+            stringBuilder.Append("<tr style='text-align: center;'><th><a href='" + substring + "'>" + substring + "</a></th><td>" + fileInfo.LastWriteTime.ToShortDateString() +"</td><td>" + fileInfo.Length +"</td></tr>\r\n");
         }
 
         stringBuilder.Append("</table></body></html>\r\n");
