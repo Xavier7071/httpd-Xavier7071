@@ -7,41 +7,23 @@ public class Response
     public byte[]? ResponseBytes { get; private set; }
     private byte[]? _contentBytes;
     private byte[]? _headerBytes;
-    private string? _path;
+    //private string[] _headers;
+    private readonly string _path;
 
-    public void Build(string? filePath)
+    public Response(string path)
     {
-        _path = filePath;
-        BuildContent();
-        BuildHeader();
+        _path = path;
+        //_headers = new string[];
+    }
 
+    public void Build(byte[] content)
+    {
+        _contentBytes = content;
+        _headerBytes = BuildHeader();
         ResponseBytes = _headerBytes!.Concat(_contentBytes!).ToArray();
     }
 
-    public void Build404()
-    {
-        var content = new StringBuilder();
-        content.Append(
-            "<html><body><h1>Not Found</h1><h3>The requested URL was not found on this server.</h3></body></html>\r\n");
-        _contentBytes = Encoding.UTF8.GetBytes(content.ToString());
-
-        var header = new StringBuilder();
-        header.Append("HTTP/1.1 404 Not Found \r\n");
-        header.Append("Content-Length: " + _contentBytes!.Length + "\r\n");
-        header.Append("Content-Type: text/html\r\n");
-        header.Append("Connection: close\r\n");
-        header.Append("\r\n");
-        _headerBytes = Encoding.UTF8.GetBytes(header.ToString());
-
-        ResponseBytes = _headerBytes!.Concat(_contentBytes!).ToArray();
-    }
-
-    private void BuildContent()
-    {
-        _contentBytes = File.ReadAllBytes(Environment.CurrentDirectory + _path);
-    }
-
-    private void BuildHeader()
+    private byte[] BuildHeader()
     {
         var header = new StringBuilder();
         header.Append("HTTP/1.1 200 OK \r\n");
@@ -50,11 +32,16 @@ public class Response
         header.Append("Connection: close\r\n");
         header.Append("\r\n");
 
-        _headerBytes = Encoding.UTF8.GetBytes(header.ToString());
+        return Encoding.UTF8.GetBytes(header.ToString());
     }
 
     private string GetContentType()
     {
+        if (!File.Exists(Environment.CurrentDirectory + _path))
+        {
+            return "text/html";
+        }
+
         return Path.GetExtension(Environment.CurrentDirectory + _path) switch
         {
             ".html" => "text/html",
@@ -64,7 +51,7 @@ public class Response
             ".png" => "image/png",
             ".gif" => "image/gif",
             ".mov" => "video/quicktime",
-            _ => ""
+            _ => "text/html"
         };
     }
 }

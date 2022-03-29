@@ -1,5 +1,4 @@
-﻿using System.Net.Sockets;
-using Httpd;
+﻿using Httpd;
 using Httpd.CLI;
 
 var config = new Config();
@@ -11,29 +10,8 @@ async Task ManageServer()
     while (true)
     {
         var client = await server.GetClient();
-        HandleRequest(client);
-    }
-}
-
-void HandleRequest(TcpClient client)
-{
-
-    server.Request = new Request(client);
-    if (server.Request.ServerRequest!.Length <= 0) return;
-    
-    if (server.FilePathIsValid())
-    {
-        var response = new Response();
-        server.BuildResponse(response);
-        server.SendResponse(response);
-    }
-    else if (server.IsFolder())
-    {
-        server.BuildDirectoryListing();
-    }
-    else
-    {
-        var response = new Response();
-        server.Build404Response(response);
+        var request = Server.HandleRequest(client);
+        if (request.ServerRequest!.Length <= 0) return;
+        server.HandleResponse(request);
     }
 }

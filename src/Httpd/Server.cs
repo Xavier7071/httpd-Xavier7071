@@ -1,10 +1,10 @@
 ﻿using System.Net.Sockets;
+using System.Text;
 
 namespace Httpd;
 
 public class Server
 {
-    public Request? Request { get; set; }
     private readonly TcpListener _listener;
     private readonly bool _directoryListing;
     private readonly string[] _extensions;
@@ -22,59 +22,65 @@ public class Server
         return await _listener.AcceptTcpClientAsync();
     }
 
-    public void BuildResponse(Response response)
+    public static Request HandleRequest(TcpClient client)
     {
-        response.Build(GetFilePath());
+        var request = new Request(client);
+        return request;
     }
 
-    public void Build404Response(Response response)
+    public void HandleResponse(Request request)
     {
-        response.Build404();
-        SendResponse(response);
-    }
-
-    public void SendResponse(Response response)
-    {
-        Request!.RespondToRequest(response.ResponseBytes!);
-    }
-
-    public void BuildDirectoryListing()
-    {
-        if (!_directoryListing || !FolderPathIsValid())
+        if (FilePathIsValid(request))
         {
-            var response = new Response();
-            Build404Response(response);
-            SendResponse(response);
+            var response = new Response(GetFilePath(request)!);
+            response.Build(File.ReadAllBytes(Environment.CurrentDirectory + GetFilePath(request)));
+            request.RespondToRequest(response.ResponseBytes!);
+        }
+        else if (IsFolder(request) && _directoryListing && FolderPathIsValid(request))
+        {
+            BuildDirectoryListing();
         }
         else
         {
-            // Directory Listing ici
+            request.RespondToRequest(Build404Response());
         }
     }
 
-    public bool FilePathIsValid()
+    private static byte[] Build404Response()
     {
-        return File.Exists(Environment.CurrentDirectory + GetFilePath()) &&
-               _extensions.Contains(Path.GetExtension(Environment.CurrentDirectory + GetFilePath()));
+        var response = new Response("null");
+        response.Build(Encoding.UTF8.GetBytes("<html><body><h1>Not Found</h1><h3>The requested URL was not found on this server.</h3></body></html>\r\n"));
+        return response.ResponseBytes!;
     }
 
-    public bool IsFolder()
+    private static void BuildDirectoryListing()
     {
-        return !Path.HasExtension(Request!.Path);
+        // Directory Listing ici
     }
 
-    private bool FolderPathIsValid()
+    private bool FilePathIsValid(Request request)
     {
-        return Directory.Exists(Environment.CurrentDirectory + Request!.Path);
+        return File.Exists(Environment.CurrentDirectory + GetFilePath(request)) &&
+               _extensions.Contains(Path.GetExtension(Environment.CurrentDirectory + GetFilePath(request)));
     }
 
-    private string? GetFilePath()
+    private static bool IsFolder(Request request)
     {
-        if (!Path.HasExtension(Request!.Path))
+        return !Path.HasExtension(request.Path);
+    }
+
+    private static bool FolderPathIsValid(Request request)
+    {
+        return Directory.Exists(Environment.CurrentDirectory + request.Path);
+    }
+
+    private static string? GetFilePath(Request request)
+    {
+        if (!Path.HasExtension(request.Path))
         {
-            return Request.Path + "index.html";
+            return request.Path + "index.html";
         }
 
-        return Request.Path;
+        return request.Path;
     }
 }

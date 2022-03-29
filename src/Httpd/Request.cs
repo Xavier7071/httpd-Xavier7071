@@ -28,6 +28,19 @@ public class Request
 
     public void RespondToRequest(byte[] responseBytes)
     {
+        if (AcceptsGzip)
+        {
+//            var stream = new MemoryStream(responseBytes);
+//            MemoryStream memoryStream;
+//            using (memoryStream = new MemoryStream())
+//            {
+//                using (var gZipStream = new GZipStream(memoryStream, CompressionMode.Compress))
+//                {
+//                    stream.CopyTo(gZipStream);
+//                }
+//            }
+        }
+
         _socket!.Send(responseBytes);
     }
 
