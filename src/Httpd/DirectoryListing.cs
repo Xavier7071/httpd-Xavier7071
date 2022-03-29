@@ -13,17 +13,21 @@ public class DirectoryListing
         _request = request;
         var response = new Response("null");
         _stringBuilder = new StringBuilder();
-        _stringBuilder.Append("<html><body style='text-align: center;'>\r\n");
-        _stringBuilder.Append("<h1>Index of " + _request.Path + "</h1>\r\n");
-        _stringBuilder.Append(
-            "<table style='margin: auto;'><tr><th>Name</th><th>Last modified</th><th>Size(Bytes)</th></tr>\r\n");
+        BuildHeader();
         BuildFolders();
         BuildFiles();
-        _stringBuilder.Append("</table></body></html>\r\n");
+        BuildFooter();
         response.Build(Encoding.UTF8.GetBytes(_stringBuilder.ToString()));
         ResponseBytes = response.ResponseBytes!;
     }
 
+    private void BuildHeader()
+    {
+        _stringBuilder.Append("<html><body style='text-align: center;'>\r\n");
+        _stringBuilder.Append("<h1>Index of " + _request.Path + "</h1>\r\n");
+        _stringBuilder.Append(
+            "<table style='margin: auto;'><tr><th>Name</th><th>Last modified</th><th>Size(Bytes)</th></tr>\r\n");
+    }
 
     private void BuildFolders()
     {
@@ -48,5 +52,10 @@ public class DirectoryListing
                                   "</a></th><td>" + fileInfo.LastWriteTime.ToShortDateString() + "</td><td>" +
                                   fileInfo.Length + "</td></tr>\r\n");
         }
+    }
+
+    private void BuildFooter()
+    {
+        _stringBuilder.Append("</table></body></html>\r\n");
     }
 }
