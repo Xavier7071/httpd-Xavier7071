@@ -9,6 +9,7 @@ public class Response
     private byte[]? _contentBytes;
     private byte[]? _headerBytes;
     private readonly ArrayList _responseCode;
+    private readonly ArrayList _responseHeaders;
     private readonly string _path;
 
     public Response(string path)
@@ -18,6 +19,7 @@ public class Response
             200,
             "OK"
         };
+        _responseHeaders = new ArrayList();
         _path = path;
     }
 
@@ -36,6 +38,7 @@ public class Response
 
     public void AddHeader(string header, string parameter)
     {
+        _responseHeaders.Add(header + ": " + parameter);
     }
 
     private byte[] BuildHeader()
@@ -44,6 +47,10 @@ public class Response
         header.Append("HTTP/1.1 " + _responseCode[0] + " " + _responseCode[1] + "\r\n");
         header.Append("Content-Length: " + _contentBytes!.Length + "\r\n");
         header.Append("Content-Type: " + GetContentType() + "\r\n");
+        foreach (var responseHeader in (_responseHeaders))
+        {
+            header.Append(responseHeader + "\r\n");
+        }
         header.Append("Connection: close\r\n");
         header.Append("\r\n");
 
