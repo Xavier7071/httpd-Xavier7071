@@ -15,9 +15,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <None Update="config.json">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
+        <PackageReference Include="System.Configuration.ConfigurationManager" Version="7.0.0-preview.2.22152.2"/>
     </ItemGroup>
 
 </Project>

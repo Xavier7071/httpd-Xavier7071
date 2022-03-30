@@ -1,50 +1,68 @@
-using System.Text.Json;
+using System.Configuration;
 
 namespace Httpd.CLI;
 
 public class Config
 {
-    public int Port { get; }
-    public bool DirectoryListing { get; }
+    public int Port { get; private set; }
+    public bool DirectoryListing { get; private set; }
     public string[] Extensions { get; private set; }
-    private JsonElement _configJson;
 
     public Config()
     {
-        ReadConfigFile();
-        Port = SetPort();
-        DirectoryListing = SetDirectoryListing();
+        Port = 3000;
+        DirectoryListing = false;
         Extensions = InitializeExtensions();
-        SetExtensions();
+        ReadConfigFile();
     }
 
     private void ReadConfigFile()
     {
-        var text = File.ReadAllText(Directory.GetCurrentDirectory() + "/config.json");
-        var doc = JsonDocument.Parse(text);
-        _configJson = doc.RootElement;
-    }
-
-    private int SetPort()
-    {
-        foreach (var jsonProperty in _configJson.EnumerateObject()
-                     .Where(jsonProperty => jsonProperty.Name.Equals("Port")))
+        if (!ConfigurationManager.AppSettings.HasKeys())
         {
-            return jsonProperty.Value.GetInt32();
+            return;
         }
 
-        return 3000;
+        var keys = ConfigurationManager.AppSettings.AllKeys;
+        foreach (var key in keys)
+        {
+            switch (key)
+            {
+                case "Port":
+                    SetPort(ConfigurationManager.AppSettings.Get(key));
+                    break;
+                case "Directory listing":
+                    SetDirectoryListing(ConfigurationManager.AppSettings.Get(key));
+                    break;
+                case "Extensions":
+                    SetExtensions(ConfigurationManager.AppSettings.Get(key));
+                    break;
+            }
+        }
     }
 
-    private bool SetDirectoryListing()
+    private void SetPort(string? value)
     {
-        foreach (var jsonProperty in _configJson.EnumerateObject()
-                     .Where(jsonProperty => jsonProperty.Name.Equals("Directory listing")))
+        if (!value!.Any(char.IsDigit))
         {
-            return jsonProperty.Value.GetBoolean();
+            return;
         }
 
-        return false;
+        Port = int.Parse(value!);
+    }
+
+    private void SetDirectoryListing(string? value)
+    {
+        if (value!.Equals("enabled"))
+        {
+            DirectoryListing = true;
+            return;
+        }
+
+        if (value.Equals("disabled"))
+        {
+            DirectoryListing = false;
+        }
     }
 
     private static string[] InitializeExtensions()
@@ -61,17 +79,14 @@ public class Config
         };
     }
 
-    private void SetExtensions()
+    private void SetExtensions(string? values)
     {
-        foreach (var jsonProperty in _configJson.EnumerateObject()
-                     .Where(jsonProperty => jsonProperty.Name.Equals("Extensions")))
+        var extensions = values!.Split();
+        if (extensions.Any(extension => !Extensions.Contains(extension)))
         {
-            Extensions = jsonProperty.Value.Deserialize<string[]>()!;
+            return;
         }
 
-        if (Extensions.Length <= 0)
-        {
-            Extensions = InitializeExtensions();
-        }
+        Extensions = extensions;
     }
 }
