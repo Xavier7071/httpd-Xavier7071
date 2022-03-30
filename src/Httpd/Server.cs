@@ -9,7 +9,7 @@ public class Server
     private readonly bool _directoryListing;
     private readonly string[] _extensions;
     private readonly List<Route> _routes;
-    
+
     private struct Route
     {
         public string HttpMethod;
@@ -39,7 +39,8 @@ public class Server
 
     public void HandleResponse(Request request)
     {
-        foreach (var route in _routes.Where(route => route.Path.Equals(request.Path) && route.HttpMethod.Equals(request.HttpMethod)))
+        foreach (var route in _routes.Where(route =>
+                     route.Path.Equals(request.Path) && route.HttpMethod.Equals(request.HttpMethod)))
         {
             RunRoute(route, request);
             return;

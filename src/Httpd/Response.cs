@@ -41,6 +41,20 @@ public class Response
         _responseHeaders.Add(header + ": " + parameter);
     }
 
+    public List<string> GetHeaders()
+    {
+        var headers = new List<string>
+        {
+            "HTTP/1.1 " + _responseCode[0] + " " + _responseCode[1],
+            "Content-Length: null",
+            "Content-Type: text/html"
+        };
+        headers.AddRange(from object? responseHeader in (_responseHeaders) select responseHeader.ToString()!);
+        headers.Add("Connection: close");
+
+        return headers;
+    }
+
     private byte[] BuildHeader()
     {
         var header = new StringBuilder();
