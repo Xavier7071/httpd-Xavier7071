@@ -8,9 +8,18 @@ public class Server
     private readonly TcpListener _listener;
     private readonly bool _directoryListing;
     private readonly string[] _extensions;
+    private readonly List<Route> _routes;
+    
+    private struct Route
+    {
+        public string HttpMethod;
+        public string Path;
+        public Action<Request, Response> Action;
+    }
 
     public Server(int port, bool directoryListing, string[] extensions)
     {
+        _routes = new List<Route>();
         _directoryListing = directoryListing;
         _extensions = extensions;
         _listener = TcpListener.Create(port);
@@ -30,6 +39,12 @@ public class Server
 
     public void HandleResponse(Request request)
     {
+        foreach (var route in _routes.Where(route => route.Path.Equals(request.Path) && route.HttpMethod.Equals(request.HttpMethod)))
+        {
+            RunRoute(route, request);
+            return;
+        }
+
         if (FilePathIsValid(request))
         {
             var response = new Response(GetFilePath(request)!);
@@ -45,6 +60,21 @@ public class Server
         {
             request.RespondToRequest(Build404Response());
         }
+    }
+
+    public void AddHandler(string httpMethod, string path, Action<Request, Response> action)
+    {
+        _routes.Add(new Route
+        {
+            HttpMethod = httpMethod,
+            Path = path,
+            Action = action
+        });
+    }
+
+    private static void RunRoute(Route route, Request request)
+    {
+        route.Action.Invoke(request, new Response("null"));
     }
 
     private static byte[] Build404Response()
