@@ -1,5 +1,4 @@
 using System.Collections;
-using System.IO.Compression;
 using System.Text;
 
 namespace Httpd;
