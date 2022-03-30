@@ -10,12 +10,14 @@ public class Request
     public string? Protocol { get; private set; }
     public string? ServerRequest { get; private set; }
     public bool AcceptsGzip { get; private set; }
+    public Dictionary<string, string> Dictionary { get; private set; }
     private NetworkStream? _stream;
     private Socket? _socket;
     private byte[]? _buffer;
 
     public Request(TcpClient client)
     {
+        Dictionary = new Dictionary<string, string>();
         HttpMethod = "";
         Protocol = "";
         Path = "";
@@ -60,12 +62,37 @@ public class Request
     {
         string?[] request = ServerRequest!.Split();
         HttpMethod = request[0];
-        Path = request[1];
         Protocol = request[2];
+
+        if (request[1]!.Contains('?'))
+        {
+            SetDictionary(request[1]!);
+            var pathEnd = request[1]!.IndexOf('?');
+            Path = request[1]![..pathEnd];
+        }
+        else
+        {
+            Path = request[1]!;
+        }
 
         if (ServerRequest.Contains("gzip"))
         {
             AcceptsGzip = true;
         }
+    }
+
+    private void SetDictionary(string path)
+    {
+        var parametersIndex = path.IndexOf('?');
+        var parameters = path[parametersIndex..];
+        // https://stackoverflow.com/questions/659887/get-url-parameters-from-a-string-in-net
+        Dictionary = parameters.TrimStart('?').Split(new[] {'&', ';'}, StringSplitOptions.RemoveEmptyEntries)
+            .Select(parameter => parameter.Split(new[] {'='}, StringSplitOptions.RemoveEmptyEntries))
+            .GroupBy(parts => parts[0],
+                parts => parts.Length > 2
+                    ? string.Join("=", parts, 1, parts.Length - 1)
+                    : (parts.Length > 1 ? parts[1] : ""))
+            .ToDictionary(grouping => grouping.Key,
+                grouping => string.Join(",", grouping));
     }
 }
