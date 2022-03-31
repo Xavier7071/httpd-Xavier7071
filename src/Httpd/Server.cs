@@ -32,6 +32,8 @@ public class Server
     {
         Log.Logger = new LoggerConfiguration()
             .WriteTo.Console()
+            .WriteTo.File($@"{Environment.CurrentDirectory}\httpd.log", shared: true,
+                rollingInterval: RollingInterval.Day)
             .CreateLogger();
 
         while (true)
@@ -118,7 +120,7 @@ public class Server
     private bool FilePathIsValid(Request request)
     {
         return File.Exists(Environment.CurrentDirectory + GetFilePath(request)) &&
-               _extensions.Contains(Path.GetExtension(Environment.CurrentDirectory + GetFilePath(request)));
+               _extensions!.Contains(Path.GetExtension(Environment.CurrentDirectory + GetFilePath(request)));
     }
 
     private static bool IsFolder(string path)

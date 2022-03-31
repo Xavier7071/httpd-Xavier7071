@@ -47,19 +47,19 @@ public class Request
 
     private void DissectRequest()
     {
-        string?[] queryStringParameters  = ServerRequest!.Split();
-        HttpMethod = queryStringParameters [0];
-        Protocol = queryStringParameters [2];
+        string?[] queryStringParameters = ServerRequest!.Split();
+        HttpMethod = queryStringParameters[0];
+        Protocol = queryStringParameters[2];
 
-        if (queryStringParameters [1]!.Contains('?'))
+        if (queryStringParameters[1]!.Contains('?'))
         {
-            SetDictionary(queryStringParameters [1]!);
-            var pathEnd = queryStringParameters [1]!.IndexOf('?');
-            Path = queryStringParameters [1]![..pathEnd];
+            SetDictionary(queryStringParameters[1]!);
+            var pathEnd = queryStringParameters[1]!.IndexOf('?');
+            Path = queryStringParameters[1]![..pathEnd];
         }
         else
         {
-            Path = queryStringParameters [1]!;
+            Path = queryStringParameters[1]!;
         }
 
         if (ServerRequest.Contains("gzip"))

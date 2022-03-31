@@ -54,11 +54,6 @@ public class Config
     private void SetExtensions(string? values)
     {
         var extensions = values!.Split();
-        if (extensions.Any(extension => Extensions!.Contains(extension)))
-        {
-            return;
-        }
-
         Extensions = extensions;
     }
 }
