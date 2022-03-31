@@ -18,13 +18,15 @@ server.AddHandler("GET", "/debug", (request, response) =>
     {
         html.Append(@$"<tr><th>{key}</th><td>{value}</td></tr>");
     }
+
     html.Append("</table><h1>Reponse</h1>");
     foreach (var header in response.GetHeaders())
     {
         html.Append(header + "<br>");
     }
+
     html.Append("</body></html>\r\n");
-    response.Build(Encoding.UTF8.GetBytes(html.ToString()));
+    response.Build(Encoding.UTF8.GetBytes(html.ToString()), request.AcceptsGzip);
     request.RespondToRequest(response.ResponseBytes!);
 });
 

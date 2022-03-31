@@ -49,7 +49,7 @@ public class Server
         if (FilePathIsValid(request))
         {
             var response = new Response(GetFilePath(request)!);
-            response.Build(File.ReadAllBytes(Environment.CurrentDirectory + GetFilePath(request)));
+            response.Build(File.ReadAllBytes(Environment.CurrentDirectory + GetFilePath(request)), request.AcceptsGzip);
             request.RespondToRequest(response.ResponseBytes!);
         }
         else if (IsFolder(request.Path!) && _directoryListing && FolderPathIsValid(request))
@@ -83,7 +83,7 @@ public class Server
         var response = new Response("null");
         response.SetResponseCode(404, "NOT FOUND");
         response.Build(Encoding.UTF8.GetBytes(
-            "<html><body><h1>Not Found</h1><h3>The requested URL was not found on this server.</h3></body></html>\r\n"));
+            "<html><body><h1>Not Found</h1><h3>The requested URL was not found on this server.</h3></body></html>\r\n"), false);
         return response.ResponseBytes!;
     }
 

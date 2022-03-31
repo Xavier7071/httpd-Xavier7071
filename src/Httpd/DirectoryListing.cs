@@ -17,7 +17,7 @@ public class DirectoryListing
         BuildFolders();
         BuildFiles();
         BuildFooter();
-        response.Build(Encoding.UTF8.GetBytes(_stringBuilder.ToString()));
+        response.Build(Encoding.UTF8.GetBytes(_stringBuilder.ToString()), request.AcceptsGzip);
         ResponseBytes = response.ResponseBytes!;
     }
 

@@ -1,4 +1,5 @@
 using System.Collections;
+using System.IO.Compression;
 using System.Text;
 
 namespace Httpd;
@@ -23,9 +24,17 @@ public class Response
         _path = path;
     }
 
-    public void Build(byte[] content)
+    public void Build(byte[] content, bool acceptsGZip)
     {
-        _contentBytes = content;
+        if (acceptsGZip)
+        {
+            CompressContent(content);
+        }
+        else
+        {
+            _contentBytes = content;
+        }
+
         _headerBytes = BuildHeader();
         ResponseBytes = _headerBytes!.Concat(_contentBytes!).ToArray();
     }
@@ -53,6 +62,16 @@ public class Response
         headers.Add("Connection: close");
 
         return headers;
+    }
+
+    private void CompressContent(byte[] content)
+    {
+        AddHeader("Content-Encoding", "gzip");
+        using var compressedStream = new MemoryStream();
+        using var zipStream = new GZipStream(compressedStream, CompressionMode.Compress);
+        zipStream.Write(content, 0, content.Length);
+        zipStream.Close();
+        _contentBytes = compressedStream.ToArray();
     }
 
     private byte[] BuildHeader()
