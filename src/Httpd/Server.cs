@@ -9,7 +9,7 @@ public class Server
 {
     private readonly TcpListener _listener;
     private readonly bool _directoryListing;
-    private readonly string[] _extensions;
+    private readonly string[]? _extensions;
     private readonly List<Route> _routes;
 
     private struct Route
@@ -19,7 +19,7 @@ public class Server
         public Action<Request, Response> Action;
     }
 
-    public Server(int port, bool directoryListing, string[] extensions)
+    public Server(int port, bool directoryListing, string[]? extensions)
     {
         _routes = new List<Route>();
         _directoryListing = directoryListing;

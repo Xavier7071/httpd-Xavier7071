@@ -6,13 +6,12 @@ public class Config
 {
     public int Port { get; private set; }
     public bool DirectoryListing { get; private set; }
-    public string[] Extensions { get; private set; }
+    public string[]? Extensions { get; private set; }
 
     public Config()
     {
         Port = 3000;
         DirectoryListing = false;
-        Extensions = InitializeExtensions();
         ReadConfigFile();
     }
 
@@ -52,24 +51,10 @@ public class Config
         DirectoryListing = value!.Equals("enabled");
     }
 
-    private static string[] InitializeExtensions()
-    {
-        return new[]
-        {
-            ".html",
-            ".css",
-            ".js",
-            ".jpg",
-            ".png",
-            ".gif",
-            ".mov"
-        };
-    }
-
     private void SetExtensions(string? values)
     {
         var extensions = values!.Split();
-        if (extensions.Any(extension => !Extensions.Contains(extension)))
+        if (extensions.Any(extension => Extensions!.Contains(extension)))
         {
             return;
         }
