@@ -8,10 +8,10 @@ public class DirectoryListing
     private readonly StringBuilder _stringBuilder;
     private readonly Request _request;
 
-    public DirectoryListing(Request request)
+    public DirectoryListing(Request request, Response response)
     {
         _request = request;
-        var response = new Response("null");
+        response.ResponsePath = null;
         _stringBuilder = new StringBuilder();
         BuildHeader();
         BuildFolders();

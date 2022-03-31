@@ -4,6 +4,7 @@ using Httpd.CLI;
 
 var config = new Config();
 var server = new Server(config.Port, config.DirectoryListing, config.Extensions);
+
 server.AddHandler("GET", "/debug", (request, response) =>
 {
     var html = new StringBuilder();
@@ -30,18 +31,4 @@ server.AddHandler("GET", "/debug", (request, response) =>
     request.RespondToRequest(response.ResponseBytes!);
 });
 
-await ManageServer();
-
-async Task ManageServer()
-{
-    while (true)
-    {
-        var client = await server.GetClient();
-        new Thread(() =>
-        {
-            var request = Server.HandleRequest(client);
-            if (request.ServerRequest!.Length <= 0) return;
-            server.HandleResponse(request);
-        }).Start();
-    }
-}
+await server.Start();

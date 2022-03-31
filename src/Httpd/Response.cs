@@ -7,21 +7,21 @@ namespace Httpd;
 public class Response
 {
     public byte[]? ResponseBytes { get; private set; }
+    public ArrayList ResponseCode { get; }
+    public string? ResponsePath { get; set; }
     private byte[]? _contentBytes;
     private byte[]? _headerBytes;
-    private readonly ArrayList _responseCode;
     private readonly ArrayList _responseHeaders;
-    private readonly string _path;
 
-    public Response(string path)
+    public Response(string? responsePath)
     {
-        _responseCode = new ArrayList
+        ResponseCode = new ArrayList
         {
             200,
             "OK"
         };
         _responseHeaders = new ArrayList();
-        _path = path;
+        ResponsePath = responsePath;
     }
 
     public void Build(byte[] content, bool acceptsGZip)
@@ -41,8 +41,8 @@ public class Response
 
     public void SetResponseCode(int code, string message)
     {
-        _responseCode[0] = code;
-        _responseCode[1] = message;
+        ResponseCode[0] = code;
+        ResponseCode[1] = message;
     }
 
     public void AddHeader(string header, string parameter)
@@ -54,7 +54,7 @@ public class Response
     {
         var headers = new List<string>
         {
-            "HTTP/1.1 " + _responseCode[0] + " " + _responseCode[1],
+            "HTTP/1.1 " + ResponseCode[0] + " " + ResponseCode[1],
             "Content-Length: null",
             "Content-Type: text/html"
         };
@@ -77,7 +77,7 @@ public class Response
     private byte[] BuildHeader()
     {
         var header = new StringBuilder();
-        header.Append("HTTP/1.1 " + _responseCode[0] + " " + _responseCode[1] + "\r\n");
+        header.Append("HTTP/1.1 " + ResponseCode[0] + " " + ResponseCode[1] + "\r\n");
         header.Append("Content-Length: " + _contentBytes!.Length + "\r\n");
         header.Append("Content-Type: " + GetContentType() + "\r\n");
         foreach (var responseHeader in (_responseHeaders))
@@ -93,12 +93,12 @@ public class Response
 
     private string GetContentType()
     {
-        if (!File.Exists(Environment.CurrentDirectory + _path))
+        if (!File.Exists(Environment.CurrentDirectory + ResponsePath))
         {
             return "text/html";
         }
 
-        return Path.GetExtension(Environment.CurrentDirectory + _path) switch
+        return Path.GetExtension(Environment.CurrentDirectory + ResponsePath) switch
         {
             ".html" => "text/html",
             ".css" => "text/css",

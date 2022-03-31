@@ -1,5 +1,7 @@
-﻿using System.Net.Sockets;
+﻿using System.Diagnostics;
+using System.Net.Sockets;
 using System.Text;
+using Serilog;
 
 namespace Httpd;
 
@@ -26,40 +28,26 @@ public class Server
         _listener.Start();
     }
 
-    public async Task<TcpClient> GetClient()
+    public async Task Start()
     {
-        return await _listener.AcceptTcpClientAsync();
-    }
-
-    public static Request HandleRequest(TcpClient client)
-    {
-        var request = new Request(client);
-        return request;
-    }
-
-    public void HandleResponse(Request request)
-    {
-        foreach (var route in _routes.Where(route =>
-                     route.Path.Equals(request.Path) && route.HttpMethod.Equals(request.HttpMethod)))
+        Log.Logger = new LoggerConfiguration()
+            .WriteTo.Console()
+            .CreateLogger();
+        
+        while (true)
         {
-            RunRoute(route, request);
-            return;
-        }
-
-        if (FilePathIsValid(request))
-        {
-            var response = new Response(GetFilePath(request)!);
-            response.Build(File.ReadAllBytes(Environment.CurrentDirectory + GetFilePath(request)), request.AcceptsGzip);
-            request.RespondToRequest(response.ResponseBytes!);
-        }
-        else if (IsFolder(request.Path!) && _directoryListing && FolderPathIsValid(request))
-        {
-            var directoryListing = new DirectoryListing(request);
-            request.RespondToRequest(directoryListing.ResponseBytes);
-        }
-        else
-        {
-            request.RespondToRequest(Build404Response());
+            var client = await GetClient();
+            new Thread(() =>
+            {
+                var timer = new Stopwatch();
+                timer.Start();
+                var request = HandleRequest(client);
+                var response = new Response(GetFilePath(request)!);
+                if (request.ServerRequest!.Length <= 0) return;
+                HandleResponse(request, response);
+                timer.Stop();
+                Log.Information(@$"{request.HttpMethod} {request.Path} {response.ResponseCode[0]} {timer.Elapsed.Milliseconds}ms - {response.ResponseBytes!.Length/8}");
+            }).Start();
         }
     }
 
@@ -73,17 +61,56 @@ public class Server
         });
     }
 
-    private static void RunRoute(Route route, Request request)
+    private async Task<TcpClient> GetClient()
     {
-        route.Action.Invoke(request, new Response("null"));
+        return await _listener.AcceptTcpClientAsync();
     }
 
-    private static byte[] Build404Response()
+    private static Request HandleRequest(TcpClient client)
     {
-        var response = new Response("null");
+        var request = new Request(client);
+        return request;
+    }
+
+    private void HandleResponse(Request request, Response response)
+    {
+        foreach (var route in _routes.Where(route =>
+                     route.Path.Equals(request.Path) && route.HttpMethod.Equals(request.HttpMethod)))
+        {
+            RunRoute(route, request, response);
+            return;
+        }
+
+        if (FilePathIsValid(request))
+        {
+            response.Build(File.ReadAllBytes(Environment.CurrentDirectory + GetFilePath(request)), request.AcceptsGzip);
+            request.RespondToRequest(response.ResponseBytes!);
+        }
+        else if (IsFolder(request.Path!) && _directoryListing && FolderPathIsValid(request))
+        {
+            var directoryListing = new DirectoryListing(request, response);
+            request.RespondToRequest(directoryListing.ResponseBytes);
+        }
+        else
+        {
+            var responseBytes = Build404Response(response);
+            request.RespondToRequest(responseBytes);
+        }
+    }
+
+    private static void RunRoute(Route route, Request request, Response response)
+    {
+        response.ResponsePath = null;
+        route.Action.Invoke(request, response);
+    }
+
+    private static byte[] Build404Response(Response response)
+    {
+        response.ResponsePath = null;
         response.SetResponseCode(404, "NOT FOUND");
         response.Build(Encoding.UTF8.GetBytes(
-            "<html><body><h1>Not Found</h1><h3>The requested URL was not found on this server.</h3></body></html>\r\n"), false);
+                "<html><body><h1>Not Found</h1><h3>The requested URL was not found on this server.</h3></body></html>\r\n"),
+            false);
         return response.ResponseBytes!;
     }
 
