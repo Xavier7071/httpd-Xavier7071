@@ -43,12 +43,8 @@ public class Config
 
     private void SetPort(string? value)
     {
-        if (!value!.Any(char.IsDigit))
-        {
-            return;
-        }
-
-        Port = int.Parse(value!);
+        if (!int.TryParse(value, out var port)) return;
+        Port = port;
     }
 
     private void SetDirectoryListing(string? value)
