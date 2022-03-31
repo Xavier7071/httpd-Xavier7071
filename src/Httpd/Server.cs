@@ -33,7 +33,7 @@ public class Server
         Log.Logger = new LoggerConfiguration()
             .WriteTo.Console()
             .CreateLogger();
-        
+
         while (true)
         {
             var client = await GetClient();
@@ -46,7 +46,8 @@ public class Server
                 if (request.ServerRequest!.Length <= 0) return;
                 HandleResponse(request, response);
                 timer.Stop();
-                Log.Information(@$"{request.HttpMethod} {request.Path} {response.ResponseCode[0]} {timer.Elapsed.Milliseconds}ms - {response.ResponseBytes!.Length/8}");
+                Log.Information(
+                    @$"{request.HttpMethod} {request.Path} {response.ResponseCode[0]} {timer.Elapsed.Milliseconds}ms - {response.ResponseBytes!.Length / 8}");
             }).Start();
         }
     }

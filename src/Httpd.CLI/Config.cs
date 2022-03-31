@@ -49,16 +49,7 @@ public class Config
 
     private void SetDirectoryListing(string? value)
     {
-        if (value!.Equals("enabled"))
-        {
-            DirectoryListing = true;
-            return;
-        }
-
-        if (value.Equals("disabled"))
-        {
-            DirectoryListing = false;
-        }
+        DirectoryListing = value!.Equals("enabled");
     }
 
     private static string[] InitializeExtensions()
