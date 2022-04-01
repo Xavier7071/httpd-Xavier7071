@@ -49,7 +49,7 @@ public class Server
                 HandleResponse(request, response);
                 timer.Stop();
                 Log.Information(
-                    @$"{request.HttpMethod} {request.Path} {response.ResponseCode[0]} {timer.Elapsed.Milliseconds}ms - {response.ResponseBytes!.Length / 8}");
+                    "{Method} {Path} {ResponseCode} {Time}ms - {Size}", request.HttpMethod!, request.Path!, response.ResponseCode[0]!, timer.Elapsed.Milliseconds, response.ResponseBytes!.Length / 8);
             }).Start();
         }
     }
